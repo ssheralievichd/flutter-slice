@@ -403,22 +403,23 @@ flutter build appbundle        # Android App Bundle
 flutter build ios              # iOS
 ```
 
+## Getting Started with Your First Feature
+
+This boilerplate is **empty and ready to go**. Follow these guides to add your first entity, feature, or page.
+
 ## Code Templates
 
-### Entity Structure Template
+### Creating an Entity
 
-```
-entities/
-└── [entity_name]/
-    ├── models/
-    │   └── [entity]_model.dart          # Data models with JSON serialization
-    ├── api/
-    │   └── [entity]_repository.dart     # API calls and data fetching
-    └── state/
-        └── [entity]_state.dart          # State management with ChangeNotifier
+Entities represent your business domain models. Here's how to create a complete entity:
+
+#### 1. Create Entity Structure
+
+```bash
+mkdir -p lib/entities/user/{models,api,state}
 ```
 
-**Example: User Entity**
+#### 2. Create the Model (`lib/entities/user/models/user_model.dart`)
 
 ```dart
 // entities/user/models/user_model.dart
@@ -495,20 +496,42 @@ class UserState extends ChangeNotifier {
 }
 ```
 
-### Feature Structure Template
+#### 3. Create the Repository (`lib/entities/user/api/user_repository.dart`)
 
-```
-features/
-└── [feature_name]/
-    ├── ui/
-    │   └── [widget]_widget.dart         # Feature UI components
-    ├── models/
-    │   └── [model]_model.dart           # Feature-specific models
-    └── api/
-        └── [feature]_api.dart           # Feature-specific API calls
+See code above for implementation.
+
+#### 4. Create the State (`lib/entities/user/state/user_state.dart`)
+
+See code above for implementation.
+
+#### 5. Register Provider in `lib/app/providers/app_providers.dart`
+
+```dart
+import '../entities/user/state/user_state.dart';
+import '../entities/user/api/user_repository.dart';
+import '../../shared/api/client/api_client.dart';
+
+class AppProviders {
+  static final List<SingleChildWidget> providers = [
+    ChangeNotifierProvider(create: (_) => ThemeProvider()),
+    ChangeNotifierProvider(
+      create: (_) => UserState(UserRepository(ApiClient())),
+    ),
+  ];
+}
 ```
 
-**Example: Authentication Feature**
+### Creating a Feature
+
+Features are reusable UI interactions. Here's how to create one:
+
+#### 1. Create Feature Structure
+
+```bash
+mkdir -p lib/features/authentication/{ui,models,api}
+```
+
+#### 2. Create Feature UI (`lib/features/authentication/ui/login_form.dart`)
 
 ```dart
 // features/authentication/ui/login_form.dart
@@ -571,95 +594,84 @@ class AuthApi {
 }
 ```
 
-### Page Structure Template
+### Creating a Page
 
-```
-pages/
-└── [page_name]/
-    ├── [page_name]_page.dart           # Main page widget
-    └── widgets/                         # Page-specific widgets (optional)
-        ├── [widget]_1.dart
-        └── [widget]_2.dart
+Pages compose features and entities into complete screens.
+
+#### 1. Create Page Directory
+
+```bash
+mkdir -p lib/pages/profile
 ```
 
-**Example: Product Detail Page**
+#### 2. Create Page Widget (`lib/pages/profile/profile_page.dart`)
 
 ```dart
-// pages/product_detail/product_detail_page.dart
-class ProductDetailPage extends StatelessWidget {
-  final String productId;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../entities/user/state/user_state.dart';
 
-  const ProductDetailPage({super.key, required this.productId});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Product Details')),
-      body: Column(
-        children: [
-          ProductInfoSection(productId: productId),
-          ProductReviewsSection(productId: productId),
-          ProductActionsBar(productId: productId),
-        ],
+      appBar: AppBar(title: const Text('Profile')),
+      body: Consumer<UserState>(
+        builder: (context, userState, _) {
+          if (userState.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return ListView.builder(
+            itemCount: userState.users.length,
+            itemBuilder: (context, index) {
+              final user = userState.users[index];
+              return ListTile(
+                title: Text(user.name),
+                subtitle: Text(user.email),
+              );
+            },
+          );
+        },
       ),
     );
   }
 }
+```
 
-// pages/product_detail/widgets/product_info_section.dart
-class ProductInfoSection extends StatelessWidget {
-  final String productId;
+#### 3. Add Route
 
-  const ProductInfoSection({super.key, required this.productId});
-
-  @override
-  Widget build(BuildContext context) {
-    // Widget implementation
-    return Container();
-  }
+In `lib/app/router/route_paths.dart`:
+```dart
+class RoutePaths {
+  static const String home = '/';
+  static const String profile = '/profile';
 }
 ```
 
-## Adding New Features
-
-### Creating a New Entity
-
-1. Create entity directory:
-```bash
-mkdir -p lib/entities/product/{models,api,state}
-touch lib/entities/product/models/product_model.dart
-touch lib/entities/product/api/product_repository.dart
-touch lib/entities/product/state/product_state.dart
+In `lib/app/router/app_router.dart`:
+```dart
+GoRoute(
+  path: RoutePaths.profile,
+  builder: (context, state) => const ProfilePage(),
+),
 ```
 
-2. Implement the model with JSON serialization
-3. Implement the repository with API calls
-4. Implement the state provider with ChangeNotifier
-5. Register provider in `app/providers/app_providers.dart`
+## Quick Reference
 
-### Creating a New Page
+### Scaffold Commands
 
-1. Create page directory:
 ```bash
-mkdir -p lib/pages/profile
-touch lib/pages/profile/profile_page.dart
+# Create new entity
+mkdir -p lib/entities/[name]/{models,api,state}
+
+# Create new feature
+mkdir -p lib/features/[name]/{ui,models,api}
+
+# Create new page
+mkdir -p lib/pages/[name]
 ```
-
-2. Implement the page widget
-3. Add route in `app/router/route_paths.dart`
-4. Add route in `app/router/app_router.dart`
-
-### Creating a New Feature
-
-1. Create feature directory:
-```bash
-mkdir -p lib/features/search/{ui,models,api}
-touch lib/features/search/ui/search_bar.dart
-touch lib/features/search/models/search_query.dart
-```
-
-2. Implement feature components in respective directories
-3. Export public API if needed
 
 ## Configuration
 
@@ -696,26 +708,6 @@ flutter test --coverage
 - **shared_preferences** - Local storage
 - **intl** - Internationalization
 
-## Quick Reference Commands
-
-### Scaffold New Modules
-
-```bash
-# Create new entity
-mkdir -p lib/entities/[name]/{models,api,state}
-touch lib/entities/[name]/models/[name]_model.dart
-touch lib/entities/[name]/api/[name]_repository.dart
-touch lib/entities/[name]/state/[name]_state.dart
-
-# Create new feature
-mkdir -p lib/features/[name]/{ui,models,api}
-touch lib/features/[name]/ui/[widget].dart
-touch lib/features/[name]/models/[model].dart
-
-# Create new page
-mkdir -p lib/pages/[name]
-touch lib/pages/[name]/[name]_page.dart
-```
 
 ## Resources
 
