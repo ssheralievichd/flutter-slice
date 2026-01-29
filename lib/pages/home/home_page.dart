@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter FSD Boilerplate'),
+        title: const Text('Flutter FSD'),
         actions: [
           IconButton(
             icon: Icon(
@@ -21,33 +21,10 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.architecture,
-              size: 100,
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Flutter FSD Boilerplate',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                'Feature-Sliced Design Architecture',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ],
+      body: const Center(
+        child: Text(
+          'Ready to build!',
+          style: TextStyle(fontSize: 24),
         ),
       ),
     );

@@ -61,24 +61,12 @@ lib/
 │   └── app.dart            # Root application widget
 │
 ├── pages/                  # Complete page implementations
-│   ├── home/
-│   │   └── home_page.dart
-│   └── example_detail/
+│   └── home/
+│       └── home_page.dart
 │
-├── features/               # Isolated user features
-│   └── example_feature/
-│       ├── ui/             # Feature UI components
-│       ├── models/         # Feature-specific models
-│       └── api/            # Feature-specific API calls
+├── features/               # Isolated user features (empty - ready for your features)
 │
-├── entities/               # Business entities
-│   └── example_entity/
-│       ├── models/         # Data models
-│       │   └── example_model.dart
-│       ├── api/            # Entity API repository
-│       │   └── example_repository.dart
-│       └── state/          # Entity state management
-│           └── example_state.dart
+├── entities/               # Business entities (empty - ready for your entities)
 │
 └── shared/                 # Shared resources
     ├── api/
